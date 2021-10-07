@@ -2,30 +2,95 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Hello World!</title>
+    <title>System Info</title>
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
-    <link rel="stylesheet" type="text/css" href="./styles.css">
+    <link rel="stylesheet" type="text/css" href="./bootstrap.min.css">
 </head>
 <body>
-    <div class="container">
-        <div class="sidebar">
-            <ul style="list-style: none;">
-                <li> Something </li>
-                <li> Something Else</li>
-            </ul>
-        </div>
-        <div class="content">
-            <h1>Hello Cruel World!</h1>
-            <p>Current theme source: <strong id="theme-source">System</strong></p>
-        
-            <button id="toggle-dark-mode">Toggle Dark Mode</button>
-            <button id="reset-to-system">Reset to System Theme</button>
-        </div>
-    </div>
    
-    
-
+<div class="container">
+    <h1>System Info App</h1>
+    <div id="output"></div>
+</div>
     <script src="./Pages/renderer.js"></script>
-  </body>
 </body>
+<script>
+    var os = require("os")
+    var diskspace = require("check-disk-space")
+    console.log(process)
+    var bytesAvailable = os.totalmem(); // returns number in bytes
+    // 1 mb = 1048576 bytes
+    var kbTotal = (os.totalmem()/1024);
+    var mbTotal = kbTotal/1024;
+    var gbTotal = mbTotal/1024;
+    var gbFree = ((os.freemem())/(1024*1024*1024));
+
+
+let diskSize;
+let diskFree;
+if (process.platform == 'win32') {
+    diskspace('C:/').then((diskSpace) => {
+         diskSize = diskSpace.size/(1024*1024*1024)
+         diskFree = diskSpace.free/(1024*1024*1024)
+    
+         let output = `
+         <h2 class= "page-header"> App Version Data </h2>
+        <ul class="list-group">
+            <li class="list-group-item">Node: ${process.versions.node}</li>
+            <li class="list-group-item">Chrome: ${process.versions.chrome}</li>
+            <li class="list-group-item">Electron: ${process.versions.electron}</li>
+            </ul>
+            
+            <h2 class= "page-header"> System Specs</h2>
+            <ul class="list-group">
+                <li class="list-group-item">System Architecture: ${process.arch}</li>
+                <li class="list-group-item">Processor Identity: ${os.cpus()[0].model}</li>
+                <li class="list-group-item"> Type: ${os.type()}</li>
+                <li class="list-group-item"> Platform: ${os.platform()}</li>
+                <li class="list-group-item"> Kernel Version: ${os.version()}</li>
+                <li class="list-group-item"> Kernel Release: ${os.release()}</li>
+                <li class="list-group-item"> Hostname: ${os.hostname()}</li>
+                <li class="list-group-item"> System Uptime: ${(os.uptime()/360).toFixed(0)} Hours</li>
+                <li class="list-group-item">Total memory available GB: ${(diskSize).toFixed(2)}</li>
+                <li class="list-group-item">There are ${diskFree.toFixed(2)}GB free in the memory of ${diskSize.toFixed(2)}GB in total</li>
+                <li class="list-group-item">System Tempfile Directory: ${os.tmpdir()}</li>
+                
+                </ul>
+                `
+                document.getElementById('output').innerHTML = output
+            })
+}else{
+
+    diskspace('/').then((diskSpace) => {
+         diskSize = diskSpace.size/(1024*1024*1024)
+         diskFree = diskSpace.free/(1024*1024*1024)
+    
+         let output = `
+         <h2 class= "page-header"> App Version Data </h2>
+        <ul class="list-group">
+            <li class="list-group-item">Node: ${process.versions.node}</li>
+            <li class="list-group-item">Chrome: ${process.versions.chrome}</li>
+            <li class="list-group-item">Electron: ${process.versions.electron}</li>
+            </ul>
+            
+            <h2 class= "page-header"> System Specs</h2>
+            <ul class="list-group">
+                <li class="list-group-item">System Architecture: ${process.arch}</li>
+                <li class="list-group-item">Processor Identity: ${os.cpus()[0].model}</li>
+                <li class="list-group-item"> Type: ${os.type()}</li>
+                <li class="list-group-item"> Platform: ${os.platform()}</li>
+                <li class="list-group-item"> Kernel Version: ${os.version()}</li>
+                <li class="list-group-item"> Kernel Release: ${os.release()}</li>
+                <li class="list-group-item"> Hostname: ${os.hostname()}</li>
+                <li class="list-group-item"> System Uptime: ${(os.uptime()/360).toFixed(0)} Hours</li>
+                <li class="list-group-item">Total memory available GB: ${(diskSize).toFixed(2)}</li>
+                <li class="list-group-item">There are ${diskFree.toFixed(2)}GB free in the memory of ${diskSize.toFixed(2)}GB in total</li>
+                <li class="list-group-item">System Tempfile Directory: ${os.tmpdir()}</li>
+                
+                </ul>
+                `
+                document.getElementById('output').innerHTML = output
+            })
+}
+</script>
 </html>

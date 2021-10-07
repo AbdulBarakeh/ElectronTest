@@ -1,5 +1,7 @@
 const { app, BrowserWindow, ipcMain, nativeTheme } = require('electron')
-
+const path  = require('path')
+const url = require("url")
+let win;
 const env = process.env.NODE_ENV || 'development'; 
 
 // If development environment 
@@ -13,9 +15,10 @@ if (env === 'development') {
 } 
 
 function createWindow () {
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 800,
     height: 600,
+    icon:__dirname+'/favicon.ico',
     webPreferences: {
       nodeIntegration: true
     }
@@ -35,6 +38,11 @@ function createWindow () {
   ipcMain.handle('dark-mode:system', () => {
     nativeTheme.themeSource = 'system'
   })
+  win.webContents.openDevTools();
+
+  win.on('closed', () => {
+    win = null;
+  });
 }
 
 app.whenReady().then(createWindow)
